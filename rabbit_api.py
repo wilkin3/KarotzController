@@ -1,7 +1,9 @@
+# rabbit_api.py
 import json
 import requests
+import configparser
 """
-Various API calls to the openkarotz API interface
+API calls to the OpenKarotz software. Go to Rabbit_IP/api.html for documentation
 
 LED Parameters
     color: RGB hex color Solid color with pulse = 0 or first color in flash if pulse = 1
