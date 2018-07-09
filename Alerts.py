@@ -77,7 +77,7 @@ LED Parameters
     speed: LED Flash frequency in ms
     pulse: 1 = yes 0= no
 """
-def LED(color,color2, pulse = 0, speed = 0,no_memory = 0):
+def LED(color,color2 = '000000', pulse = 0, speed = 0,no_memory = 0):
     LED = {'color': color, 'color2': color2, 'pulse': pulse,'speed': speed,'no_memory': no_memory}
     l = requests.get('http://'+Rabbit_IP+'/cgi-bin/leds',params=LED)
 
@@ -121,7 +121,9 @@ def ears_individual(left,right,noreset=1):
 def ears_reset():
     e = requests.get('http://'+Rabbit_IP+'/cgi-bin/ears_reset')
 
-#ears_reset()
+ears_reset()
+#LED('FF0000')
+
 #sound(AlertSound)
 """ CriticalAlert('BNSF Sniffer Down',1)
 nonCriticalAlert()
