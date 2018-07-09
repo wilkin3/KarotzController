@@ -8,9 +8,13 @@ import logging
 #read config.ini and set Rabbit_IP
 def get_ip():
     config = configparser.ConfigParser()
-    config.sections()
     config.read('config.ini')
     return config['rabbit']['rabbitIP']
+
+def get_timeout():
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+    return config['controller']['timeout']
 
 """
 LED
@@ -22,8 +26,9 @@ LED
 """
 def LED(color,color2 = '000000', pulse = 0, speed = 500,no_memory = 0):
     Rabbit_IP = get_ip()
+    rabbit_timeout = get_timeout()
     LED = {'color': color, 'color2': color2, 'pulse': pulse,'speed': speed,'no_memory': no_memory}
-    l = requests.get('http://'+Rabbit_IP+'/cgi-bin/leds',params=LED)
+    l = requests.get('http://'+Rabbit_IP+'/cgi-bin/leds',params=LED,timeout=rabbit_timeout)
 
 """
 Text-to-Speech Parameters
@@ -33,7 +38,7 @@ Text-to-Speech Parameters
 def TTS(message,voice = 6,cache = 1):
     Rabbit_IP = get_ip()
     TTS = {'voice': voice,'text': message,'nocache': cache}
-    t = requests.get('http://'+Rabbit_IP+'/cgi-bin/tts',params=TTS)
+    t = requests.get('http://'+Rabbit_IP+'/cgi-bin/tts',params=TTS,timeout=30)
 
 """
 Sound parameters
@@ -43,7 +48,7 @@ For custome sound upload mp3 file to /usr/openkarotz/Sounds
 def sound(name):
     Rabbit_IP = get_ip()
     SOUND = {'id': name}
-    s = requests.get('http://'+Rabbit_IP+'/cgi-bin/sound',params=SOUND)
+    s = requests.get('http://'+Rabbit_IP+'/cgi-bin/sound',params=SOUND,timeout=30)
 
 """
 Ear Rotation Parameters
@@ -55,12 +60,12 @@ noreset = 1 will cycle ears to top position and start from 0
 def ears_together(pos,noreset=1):
     Rabbit_IP = get_ip()
     EAR = {'left': pos,'right':pos,'noreset': noreset}
-    e = requests.get('http://'+Rabbit_IP+'/cgi-bin/ears',params=EAR)
+    e = requests.get('http://'+Rabbit_IP+'/cgi-bin/ears',params=EAR,timeout=30)
 
 def ears_individual(left,right,noreset=1):
     Rabbit_IP = get_ip()
     EAR = {'left': left,'right': right,'noreset': noreset}
-    e = requests.get('http://'+Rabbit_IP+'/cgi-bin/ears',params=EAR)
+    e = requests.get('http://'+Rabbit_IP+'/cgi-bin/ears',params=EAR,timeout=30)
 
 def ears_reset():
     Rabbit_IP = get_ip()
