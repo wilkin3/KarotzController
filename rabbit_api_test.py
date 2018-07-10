@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import rabbit_api
 #rabbit_api.LED('000000','0000FF',1,1500)
 #rabbit_api.wakeup()
@@ -10,5 +9,6 @@ import rabbit_api
 #print(rabbit_api.checkStatus('led_color'))
 #print(rabbit_api.checkStatus())
 #rabbit_api.gotosleep()
-print(rabbit_api.get_timeout())
-print(rabbit_api.get_ip())
+#print(rabbit_api.get_timeout())
+#print(rabbit_api.get_ip())
+rabbit_api.get_ip()

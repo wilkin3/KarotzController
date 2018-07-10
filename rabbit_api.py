@@ -9,12 +9,14 @@ import logging
 def get_ip():
     config = configparser.ConfigParser()
     config.read('config.ini')
-    return config['rabbit']['rabbitIP']
+    IP = config.sections()
+    return print(IP)
 
 def get_timeout():
     config = configparser.ConfigParser()
     config.read('config.ini')
-    return config['controller']['timeout']
+    config.sections()
+    return config['controllerconfig']['timeout']
 
 """
 LED
@@ -27,8 +29,22 @@ LED
 def LED(color,color2 = '000000', pulse = 0, speed = 500,no_memory = 0):
     Rabbit_IP = get_ip()
     rabbit_timeout = get_timeout()
-    LED = {'color': color, 'color2': color2, 'pulse': pulse,'speed': speed,'no_memory': no_memory}
-    l = requests.get('http://'+Rabbit_IP+'/cgi-bin/leds',params=LED,timeout=rabbit_timeout)
+    try:
+        LED = {'color': color, 'color2': color2, 'pulse': pulse,'speed': speed,'no_memory': no_memory}
+        l = requests.get('http://'+Rabbit_IP+'/cgi-bin/leds',params=LED,timeout=rabbit_timeout)
+        resp = s.json()
+        if resp[msg] == 'Unable to perform action, rabbit is sleeping.':
+            raise rabbitSleeping (msg)
+        else:
+            return resp
+    except (ConnectionError, Timeout):
+        resp = s.json()
+        return resp
+    except rabbitSleeping:
+        print('Rabbit is in sleep mode')
+
+    
+
 
 """
 Text-to-Speech Parameters
@@ -38,7 +54,7 @@ Text-to-Speech Parameters
 def TTS(message,voice = 6,cache = 1):
     Rabbit_IP = get_ip()
     TTS = {'voice': voice,'text': message,'nocache': cache}
-    t = requests.get('http://'+Rabbit_IP+'/cgi-bin/tts',params=TTS,timeout=30)
+    t = requests.get('http://'+Rabbit_IP+'/cgi-bin/tts',params=TTS,timeout=rabbit_timeout)
 
 """
 Sound parameters
@@ -48,7 +64,7 @@ For custome sound upload mp3 file to /usr/openkarotz/Sounds
 def sound(name):
     Rabbit_IP = get_ip()
     SOUND = {'id': name}
-    s = requests.get('http://'+Rabbit_IP+'/cgi-bin/sound',params=SOUND,timeout=30)
+    s = requests.get('http://'+Rabbit_IP+'/cgi-bin/sound',params=SOUND,timeout=rabbit_timeout)
 
 """
 Ear Rotation Parameters
@@ -60,33 +76,33 @@ noreset = 1 will cycle ears to top position and start from 0
 def ears_together(pos,noreset=1):
     Rabbit_IP = get_ip()
     EAR = {'left': pos,'right':pos,'noreset': noreset}
-    e = requests.get('http://'+Rabbit_IP+'/cgi-bin/ears',params=EAR,timeout=30)
+    e = requests.get('http://'+Rabbit_IP+'/cgi-bin/ears',params=EAR,timeout=rabbit_timeout)
 
 def ears_individual(left,right,noreset=1):
     Rabbit_IP = get_ip()
     EAR = {'left': left,'right': right,'noreset': noreset}
-    e = requests.get('http://'+Rabbit_IP+'/cgi-bin/ears',params=EAR,timeout=30)
+    e = requests.get('http://'+Rabbit_IP+'/cgi-bin/ears',params=EAR,timeout=rabbit_timeout)
 
 def ears_reset():
     Rabbit_IP = get_ip()
-    e = requests.get('http://'+Rabbit_IP+'/cgi-bin/ears_reset')
+    e = requests.get('http://'+Rabbit_IP+'/cgi-bin/ears_reset',timeout=rabbit_timeout)
 
 
-    #Calls the state API and puls the curernt LED color. For checking the alert state of the bunny
+#Calls the state API
 def checkStatus(key =''):
     Rabbit_IP = get_ip()
     if key != '':
-        s = requests.get('http://'+Rabbit_IP+'/cgi-bin/status')
+        s = requests.get('http://'+Rabbit_IP+'/cgi-bin/status',timeout=rabbit_timeout)
         resp = s.json()
         return resp[key]
     elif key == '':
-        s = requests.get('http://'+Rabbit_IP+'/cgi-bin/status')
+        s = requests.get('http://'+Rabbit_IP+'/cgi-bin/status',timeout=rabbit_timeout)
         resp = s.json()
         return resp
 # puts rabbit in sleep mode. Can be used to mute actions
 def gotosleep():
     Rabbit_IP = get_ip()
-    r = requests.get('http://'+Rabbit_IP+'/cgi-bin/sleep')
+    r = requests.get('http://'+Rabbit_IP+'/cgi-bin/sleep',timeout=rabbit_timeout)
 
 # wake the rabbit up from sleep mode
 def wakeup():
