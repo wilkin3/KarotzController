@@ -1,0 +1,10 @@
+import rabbit_api
+#rabbit_api.wakeup()
+#rabbit_api.gotosleep()
+#rabbit_api.TTS('test')
+#rabbit_api.sound('bip1')
+#rabbit_api.ears_together(8,0)
+#rabbit_api.ears_individual(2,5)
+#rabbit_api.ears_reset()
+#rabbit_api.checkStatus('sleep_time')
+rabbit_api.rabbit_reboot()

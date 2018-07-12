@@ -4,19 +4,35 @@ import json
 import requests
 import configparser
 import logging
+import os
 
+# define Python user-defined exceptions
+class rabbitSleeping(Exception):
+   """Rabbit is in sleep mode"""
+   pass
+
+## config paser is being a pain in the ass. Dummy functions for now
+def get_ip():
+    Rabbit_IP = '192.168.1.253'
+    return Rabbit_IP
+
+def get_timeout():
+    timeout = 10
+    return timeout
+
+""" 
+# fucntions that use config parser. Cant figure out why it will not see the file
 #read config.ini and set Rabbit_IP
 def get_ip():
     config = configparser.ConfigParser()
     config.read('config.ini')
-    IP = config.sections()
-    return print(IP)
+    return config['Rabbit']['rabbitIP']
 
 def get_timeout():
     config = configparser.ConfigParser()
     config.read('config.ini')
     config.sections()
-    return config['controllerconfig']['timeout']
+    return config['controller']['timeout'] """
 
 """
 LED
@@ -31,17 +47,17 @@ def LED(color,color2 = '000000', pulse = 0, speed = 500,no_memory = 0):
     rabbit_timeout = get_timeout()
     try:
         LED = {'color': color, 'color2': color2, 'pulse': pulse,'speed': speed,'no_memory': no_memory}
-        l = requests.get('http://'+Rabbit_IP+'/cgi-bin/leds',params=LED,timeout=rabbit_timeout)
-        resp = s.json()
-        if resp[msg] == 'Unable to perform action, rabbit is sleeping.':
-            raise rabbitSleeping (msg)
+        l = requests.get('http://'+Rabbit_IP+'/cgi-bin/leds',params=LED, timeout=rabbit_timeout)
+        resp = json.loads(l.text)
+        if 'msg' in resp:
+            if resp['msg'] == 'Unable to perform action, rabbit is sleeping.':
+                return print(resp['msg'])
         else:
-            return resp
-    except (ConnectionError, Timeout):
-        resp = s.json()
+            return print(resp)
+    except (requests.ConnectionError, requests.Timeout):
+        resp = json.loads(l.text)
+        print ('connection timeout')
         return resp
-    except rabbitSleeping:
-        print('Rabbit is in sleep mode')
 
     
 
@@ -53,9 +69,19 @@ Text-to-Speech Parameters
 """
 def TTS(message,voice = 6,cache = 1):
     Rabbit_IP = get_ip()
-    TTS = {'voice': voice,'text': message,'nocache': cache}
-    t = requests.get('http://'+Rabbit_IP+'/cgi-bin/tts',params=TTS,timeout=rabbit_timeout)
-
+    rabbit_timeout = get_timeout()
+    try:
+        TTS = {'voice': voice,'text': message,'nocache': cache}
+        l = requests.get('http://'+Rabbit_IP+'/cgi-bin/tts',params=TTS,timeout=rabbit_timeout)
+        resp = json.loads(l.text)
+        if resp['played'] == 'False':
+            return print(resp['Unable to perform action, rabbit is sleeping.'])
+        else:
+            return print(resp)
+    except (requests.ConnectionError, requests.Timeout):
+        resp = json.loads(l.text)
+        print ('connection timeout')
+        return resp
 """
 Sound parameters
 For sound list point browser to Rabbit_IP/cgi/bin/sound_list
@@ -63,8 +89,20 @@ For custome sound upload mp3 file to /usr/openkarotz/Sounds
 """
 def sound(name):
     Rabbit_IP = get_ip()
-    SOUND = {'id': name}
-    s = requests.get('http://'+Rabbit_IP+'/cgi-bin/sound',params=SOUND,timeout=rabbit_timeout)
+    rabbit_timeout = get_timeout()
+    try:
+        SOUND = {'id': name}
+        l = requests.get('http://'+Rabbit_IP+'/cgi-bin/sound',params=SOUND,timeout=rabbit_timeout)
+        resp = json.loads(l.text)
+        if 'msg' in resp:
+            if resp['msg'] == 'Unable to perform action, rabbit is sleeping.':
+                return print(resp['msg'])
+        else:
+            return print(resp)
+    except (requests.ConnectionError, requests.Timeout):
+        resp = json.loads(l.text)
+        print ('connection timeout')
+        return resp
 
 """
 Ear Rotation Parameters
@@ -75,41 +113,111 @@ noreset = 1 will cycle ears to top position and start from 0
 """
 def ears_together(pos,noreset=1):
     Rabbit_IP = get_ip()
-    EAR = {'left': pos,'right':pos,'noreset': noreset}
-    e = requests.get('http://'+Rabbit_IP+'/cgi-bin/ears',params=EAR,timeout=rabbit_timeout)
+    rabbit_timeout = get_timeout()
+    try:
+        EAR = {'left': pos,'right':pos,'noreset': noreset}
+        l = requests.get('http://'+Rabbit_IP+'/cgi-bin/ears',params=EAR,timeout=rabbit_timeout)
+        resp = json.loads(l.text)
+        if 'msg' in resp:
+            if resp['msg'] == 'Unable to perform action, rabbit is sleeping.':
+                return print(resp['msg'])
+        else:
+            return print(resp)
+    except (requests.ConnectionError, requests.Timeout):
+        resp = json.loads(l.text)
+        print ('connection timeout')
+        return resp
 
 def ears_individual(left,right,noreset=1):
     Rabbit_IP = get_ip()
-    EAR = {'left': left,'right': right,'noreset': noreset}
-    e = requests.get('http://'+Rabbit_IP+'/cgi-bin/ears',params=EAR,timeout=rabbit_timeout)
+    rabbit_timeout = get_timeout()
+    try:   
+        EAR = {'left': left,'right': right,'noreset': noreset}
+        l = requests.get('http://'+Rabbit_IP+'/cgi-bin/ears',params=EAR,timeout=rabbit_timeout)
+        resp = json.loads(l.text)
+        if 'msg' in resp:
+            if resp['msg'] == 'Unable to perform action, rabbit is sleeping.':
+                return print(resp['msg'])
+        else:
+            return print(resp)
+    except (requests.ConnectionError, requests.Timeout):
+        resp = json.loads(l.text)
+        print ('connection timeout')
+        return resp
 
 def ears_reset():
     Rabbit_IP = get_ip()
-    e = requests.get('http://'+Rabbit_IP+'/cgi-bin/ears_reset',timeout=rabbit_timeout)
+    rabbit_timeout = get_timeout()
+    try:
+        l = requests.get('http://'+Rabbit_IP+'/cgi-bin/ears_reset',timeout=rabbit_timeout)  
+        resp = json.loads(l.text)
+        if 'msg' in resp:
+            if resp['msg'] == 'Unable to perform action, rabbit is sleeping.':
+                return print(resp['msg'])
+        else:
+            return print(resp)
+    except (requests.ConnectionError, requests.Timeout):
+        resp = json.loads(l.text)
+        print ('connection timeout')
+        return resp
 
 
 #Calls the state API
 def checkStatus(key =''):
     Rabbit_IP = get_ip()
-    if key != '':
-        s = requests.get('http://'+Rabbit_IP+'/cgi-bin/status',timeout=rabbit_timeout)
-        resp = s.json()
-        return resp[key]
-    elif key == '':
-        s = requests.get('http://'+Rabbit_IP+'/cgi-bin/status',timeout=rabbit_timeout)
-        resp = s.json()
+    rabbit_timeout = get_timeout()
+    try:
+        if key != '':
+            l = requests.get('http://'+Rabbit_IP+'/cgi-bin/status',timeout=rabbit_timeout)
+            resp = json.loads(l.text)
+            return resp[key]
+        elif key == '':
+            l = requests.get('http://'+Rabbit_IP+'/cgi-bin/status',timeout=rabbit_timeout)
+            resp = json.loads(l.text)
+            return resp
+    except (requests.ConnectionError, requests.Timeout):
+        resp = json.loads(l.text)
+        print ('connection timeout')
         return resp
+
 # puts rabbit in sleep mode. Can be used to mute actions
 def gotosleep():
     Rabbit_IP = get_ip()
-    r = requests.get('http://'+Rabbit_IP+'/cgi-bin/sleep',timeout=rabbit_timeout)
+    rabbit_timeout = get_timeout()
+    try:
+        l = requests.get('http://'+Rabbit_IP+'/cgi-bin/sleep')
+        resp = json.loads(l.text)
+        if 'msg' in resp:
+            if resp['msg'] == 'Unable to perform action, rabbit is sleeping.':
+                return print(resp['msg'])
+        else:
+            return print(resp)
+    except (requests.ConnectionError, requests.Timeout):
+        resp = json.loads(l.text)
+        print ('connection timeout')
+        return resp
 
 # wake the rabbit up from sleep mode
 def wakeup():
     Rabbit_IP = get_ip()
-    r = requests.get('http://'+Rabbit_IP+'/cgi-bin/wakeup?silent=1')
-
+    rabbit_timeout = get_timeout()
+    try:
+        l = requests.get('http://'+Rabbit_IP+'/cgi-bin/wakeup?silent=1')
+        resp = json.loads(l.text)
+        return resp
+    except (requests.ConnectionError, requests.Timeout):
+        resp = json.loads(l.text)
+        print ('connection timeout')
+        return resp
 #reboot the rabbit
 def rabbit_reboot():
     Rabbit_IP = get_ip()
-    r = requests.get('http://'+Rabbit_IP+'/cgi-bin/reboot')
+    rabbit_timeout = get_timeout()
+    try:
+        l = requests.get('http://'+Rabbit_IP+'/cgi-bin/reboot')
+        resp = json.loads(l.text)
+        return resp
+    except (requests.ConnectionError, requests.Timeout):
+        resp = json.loads(l.text)
+        print ('connection timeout')
+        return resp

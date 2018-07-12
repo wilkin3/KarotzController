@@ -1,0 +1,10 @@
+{
+	"folders": [
+		{
+			"path": "C:\\Users\\wilki\\Documents\\Rabbit\\PythonScripts"
+		}
+	],
+	"settings": {
+		"python.pythonPath": "${workspaceFolder}\\KarotzServer\\Scripts\\python.exe"
+	}
+}
