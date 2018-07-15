@@ -9,7 +9,7 @@ import rabbit_api
 
 CritialAlertColor = 'E10000'
 NonCriticalAlertColor = 'D7FF00'
-AlertSound = 'laser_15'
+AlertSound = 'unsure'
 AlertVoice = '6'
 
 
@@ -23,8 +23,8 @@ def strongbad():
      
 
 # Critical Alert. Message is any text for tts to speak. If not specified will say nothing. Sound = 1 will loop with alert sound
-def CriticalAlert(message = 'off',noise = 0, sound = 0, soundFile = AlertSound, AlertVoice = AlertVoice, color = CritialAlertColor,loopnum = 2):
-    rabbit_api.LED(color,'000000',1,250) # flash LED red quickly
+def CriticalAlert(message = 'off',noise = 0, soundFile = AlertSound, AlertVoice = AlertVoice, color = CritialAlertColor,loopnum = 3):
+    rabbit_api.LED(color,'000000',1,1250) # flash LED red
     rabbit_api.ears_together(56,0) 
     if message != 'off' and noise == 0:
         for number in range(loopnum):
@@ -33,7 +33,7 @@ def CriticalAlert(message = 'off',noise = 0, sound = 0, soundFile = AlertSound, 
         for number in range(loopnum):
             rabbit_api.sound(soundFile)
             rabbit_api.TTS(message,AlertVoice)
-    elif message == 'off' and sound == 1:
+    elif message == 'off' and noise == 1:
         for number in range(loopnum):
             rabbit_api.sound(soundFile)
     else:
