@@ -25,15 +25,17 @@ def strongbad():
 # Critical Alert. Message is any text for tts to speak. If not specified will say nothing. Sound = 1 will loop with alert sound
 def CriticalAlert(message = 'off',noise = 0, sound = 0, soundFile = AlertSound, AlertVoice = AlertVoice, color = CritialAlertColor,loopnum = 2):
     rabbit_api.LED(color,'000000',1,250) # flash LED red quickly
-    rabbit_api.ears_together(24,0) #ears will rotate. Ending straight out to the side
+    rabbit_api.ears_together(56,0) 
     if message != 'off' and noise == 0:
-        rabbit_api.TTS(message,AlertVoice)
+        for number in range(loopnum):
+            rabbit_api.TTS(message,AlertVoice)
     elif message != 'off' and noise == 1:
         for number in range(loopnum):
             rabbit_api.sound(soundFile)
             rabbit_api.TTS(message,AlertVoice)
     elif message == 'off' and sound == 1:
-        rabbit_api.sound(soundFile)
+        for number in range(loopnum):
+            rabbit_api.sound(soundFile)
     else:
         return
 
@@ -45,24 +47,18 @@ def CriticalAlertNoSound(message,color = CritialAlertColor): #"Wake the dead" so
 
 # Non-critical warnings
 def nonCriticalAlert(color = NonCriticalAlertColor):
-    if checkState() == CritialAlertColor: #uses the LED as a proxy for a state flag. If the LED is the CritialAlertColor, will not overwrite
-        return
-    else:
-        LED(color,'000000',1,1750)
-        ears_individual(0,7,0)
+    rabbit_api.LED(color,'000000',1,1750)
+    rabbit_api.ears_individual(0,7,0)
 
 #Reset the ears to up, LED to green and announce system is up
 def CriticalAlertReset (message = 'System back to normal'):
-    LED('00FF00',000000,0,0)
-    ears_reset()
-    TTS(message,AlertVoice)
+    rabbit_api.LED('00FF00',000000,0,0)
+    rabbit_api.ears_reset()
+    rabbit_api.TTS(message,AlertVoice)
 # clears alerts with less fuss
 def nonCritialAlertReset():
-    if checkState() == CritialAlertColor: #uses the LED as a proxy for a state flag. If the LED is the CritialAlertColor, will not overwrite
-        return
-    else:
-        LED('00FF00',000000,0,0)
-        ears_reset()
+    rabbit_api.LED('00FF00',000000,0,0)
+    rabbit_api.ears_reset()
 
 
 """ #Calls the state API and puls the curernt LED color. For checking the alert state of the bunny

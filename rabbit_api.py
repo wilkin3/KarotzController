@@ -13,7 +13,7 @@ class rabbitSleeping(Exception):
 
 ## config paser is being a pain in the ass. Dummy functions for now
 def get_ip():
-    Rabbit_IP = '192.168.1.253'
+    Rabbit_IP = '192.168.1.3'
     return Rabbit_IP
 
 def get_timeout():
