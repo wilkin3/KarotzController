@@ -23,9 +23,9 @@ def strongbad():
      
 
 # Critical Alert. Message is any text for tts to speak. If not specified will say nothing. Sound = 1 will loop with alert sound
-def CriticalAlert(message = 'off',noise = 0, soundFile = AlertSound, AlertVoice = AlertVoice, color = CritialAlertColor,loopnum = 3):
+def CriticalAlert(message = 'off',noise = 0, soundFile = AlertSound, AlertVoice = AlertVoice, color = CritialAlertColor,loopnum = 2):
     rabbit_api.LED(color,'000000',1,1250) # flash LED red
-    rabbit_api.ears_together(56,0) 
+    rabbit_api.ears_together(72,0) 
     if message != 'off' and noise == 0:
         for number in range(loopnum):
             rabbit_api.TTS(message,AlertVoice)
@@ -51,12 +51,12 @@ def nonCriticalAlert(color = NonCriticalAlertColor):
     rabbit_api.ears_individual(0,7,0)
 
 #Reset the ears to up, LED to green and announce system is up
-def CriticalAlertReset (message = 'System back to normal'):
+def AlertResetVoice (message = 'System back to normal'):
     rabbit_api.LED('00FF00',000000,0,0)
     rabbit_api.ears_reset()
     rabbit_api.TTS(message,AlertVoice)
 # clears alerts with less fuss
-def nonCritialAlertReset():
+def AlertReset():
     rabbit_api.LED('00FF00',000000,0,0)
     rabbit_api.ears_reset()
 
